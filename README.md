@@ -7,9 +7,9 @@ As developers we are often faced with the challenge of trying to design our syst
 
 ## Object Oriented CSS 
 
-Pros | Cons
---- | ---
-* good for you | * breaks down in responsive queries
+| Pros | Cons |
+| --- | --- |
+| good for you | breaks down in responsive queries |
 
 ### When to use?
 
