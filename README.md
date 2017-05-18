@@ -8,6 +8,16 @@ As developers we are often faced with the challenge of trying to design our syst
 The goal currently for css rules is this:
 > making sure specificity ...homogeneous across rules
 
+## Limitations of IDs as selectors
+> In summary, they are far more specific than a class selector - therefore making overrides more difficult. Plus they can only be used once in the page anyway so their efficacy is limited.
+
+However, to keep specificty lower you can do the following: 
+```css
+[id="Thing"] {
+/* Property/Values Here */
+}
+```
+
 ## Object Oriented CSS 
 
 The best exmple of this approach is [Atomic CSS](https://acss.io/) where the class name is composed of different features which make up or compose the overall styling. The philosophy behind atomic css is to break the css into a variety of building blocks which can be declared inside the element. In this way, the component retains control of the styling, and the user can create variables and customize the stylistic building blocks for the application.
@@ -75,5 +85,17 @@ Block Element Modifier or (BEM) is an approach to naming css classes in order to
 * Modifiers can be confusing -- does it change state? Does it reflect a component attribute?
 
 ## Enduring CSS
+Takes a lot from BEM styling but 
 
 
+**The ten commandments of Enduring CSS**
+1. Thou shalt have a single source of truth for all key selectors
+2. Thou shalt not nest, unless thou art nesting media queries or overrides
+3. Thou shalt not use ID selectors, even if thou thinkest thou hast to
+4. Thou shalt not write vendor prefixes in the authoring style sheets
+5. Thou shalt use variables for sizing, colours and z-index
+6. Thou shalt always write rules mobile first (avoid max-width)
+7. Use mixins sparingly, and avoid @extend
+8. Thou shalt comment all magic numbers and browser hacks
+9. Thou shalt not inline images
+10. Thou shalt not write complicated CSS when simple CSS will work just as well
