@@ -77,12 +77,33 @@ Block Element Modifier or (BEM) is an approach to naming css classes in order to
 .site-search--full {} /* Modifier */
 ```
 
-
 ### Pros
 * Easy naming system
 
 ## Cons
 * Modifiers can be confusing -- does it change state? Does it reflect a component attribute?
+
+## BEM naming enhancements aka BEMIT
+Hungarian Notation, you can use c-, for Components, o-, for Objects, u-, for Utilities, and is-/has- for States (there are plenty more detailed in the linked post).
+
+[Responsive suffixes](https://csswizardry.com/2015/08/bemit-taking-the-bem-naming-convention-a-step-further/) using @ breakpoint.
+
+```html
+<div class="o-media@md  c-user  c-user--premium">
+  <img src="" alt="" class="o-media__img@md  c-user__photo  c-avatar" />
+  <p class="o-media__body@md  c-user__bio">...</p>
+</div>
+```
+
+```css
+@media print {
+  /* you must escape the @ character */
+  .u-hidden\@print { 
+    display: none;
+  }
+
+}
+```
 
 ## Enduring CSS
 Takes a lot from BEM styling but 
@@ -99,3 +120,6 @@ Takes a lot from BEM styling but
 8. Thou shalt comment all magic numbers and browser hacks
 9. Thou shalt not inline images
 10. Thou shalt not write complicated CSS when simple CSS will work just as well
+
+## Extra resources
+[Compare Selector Speed](https://benfrain.com/selector-test/)
