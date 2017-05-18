@@ -77,6 +77,11 @@ Block Element Modifier or (BEM) is an approach to naming css classes in order to
 .site-search--full {} /* Modifier */
 ```
 
+## Pitfalls in BEM
+1. Grandchildren selectors. Don't use `parent_grandparent_child` like `card_header_div_label`. Instead think of the block level element that this element belongs to. if it is in a react component, this would be the Component name. So Header.jsx, and you would follow up by naming the element inside the Header. So you would have Header__text.
+
+[More examples of pitfalls](https://medium.com/fed-or-dead/battling-bem-5-common-problems-and-how-to-avoid-them-5bbd23dee319)
+
 ### Pros
 * Easy naming system
 
@@ -101,12 +106,11 @@ Hungarian Notation, you can use c-, for Components, o-, for Objects, u-, for Uti
   .u-hidden\@print { 
     display: none;
   }
-
 }
 ```
 
 ## Enduring CSS
-Takes a lot from BEM styling but 
+Takes a lot from BEM styling but uses the idea of a context space as a prefix. The context would look like `sw-Block___element`. So in Card.jsx in the referalls and authorizations app, say you have a link, then you'd represent it like this: `ra-Card__link`.
 
 
 **The ten commandments of Enduring CSS**
