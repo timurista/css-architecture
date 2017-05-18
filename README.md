@@ -1,12 +1,23 @@
 # CSS Architecture
 
-A high level view of the common css approaches. This work was inspired by the book Enduring CSS by ben Frian.
+A high level view of the common css approaches. This work was inspired by the book Enduring CSS by Ben Frian.
 
 ## Specificty Problem for large scale applications
 As developers we are often faced with the challenge of trying to design our system in a way which is easy to read and reason about. The cascading nature of css can create a number of headaches because of how specificty is assigned. The different problems outlined below attempt to solve the specificty issue through a conscious design of the css naming convention.
 
-The goal currently for css rules is this:
-> making sure specificity ...homogeneous across rules
+### This table summarizes problem of name clashing
+selector | inline | ID | class | type
+---------| -------| -- | ----- | ----
+.widget | 0 | 0 | 1 | 0
+aside#sidebar .widget | 0 | 1 | 1 | 1
+.class-on-sidebar .widget | 0 | 0 | 2 | 0
+
+
+1. different weights of selectors are confusing to learn and understand
+2. can lead to the use of !important when specificty is not understood, effectively creating a specificty war
+3. leads to css styling that is hard to reason about, and bloated selectors which obfuscate the relationship between the DOM element and the actual style applied to it
+
+> Low specificity: If specificity battles start between selectors, the code quality starts to nosedive. Having a low specificity will help maintain the integrity of a large project’s CSS for a lot longer.
 
 ## Limitations of IDs as selectors
 > In summary, they are far more specific than a class selector - therefore making overrides more difficult. Plus they can only be used once in the page anyway so their efficacy is limited.
@@ -65,6 +76,73 @@ The idea behind this approach is really to organize your code or group the css i
 - State
 - Theme
 
+## Base
+A rule applied to an element using an element selector, doesn't incldue classes or ID selectors.
+```css
+body, form {
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    color: #039;
+}
+
+a:hover {
+    color: #03F;    
+}
+```
+
+## Layout
+Major layouts which affect larger eleemnts would be such as header or footer. Traditional Larger areas of the page. Layout is composed of modules.
+```css
+#header, #article, #footer {
+    width: 960px;
+    margin: auto;
+}
+
+#article {
+    border: solid #CCC;
+    border-width: 1px 0 0;
+}
+```
+
+## Modules
+Discrete component of the page. It is your navigation bars and your carousels and your dialogs and your widgets and so on. This is the meat of the page. Modules sit inside Layout components. Use class names when defining modules. Example: `.module > h2 { padding: 5px }`
+
+## State
+A state is something that augments and overrides all other styles. Message may be in a success or errored state. Applied to same eleemnt as base or module class. Indicate a JS dependency
+```html
+<div id="header" class="is-collapsed">
+    <form>
+        <div class="msg is-error">
+            There is an error!
+        </div>
+        <label for="searchbox" class="is-hidden">Search</label>
+        <input type="search" id="searchbox">
+    </form>
+</div>
+```
+
+
+## Themes
+Defines colours and images that give your application or site its look and feel. Separating the theme out into its own set of styles allows for those styles to be easily redefined for alternate themes.
+
+```css
+/* Module Theming */
+/* in module-name.css */
+.mod {
+    border: 1px solid;
+}
+
+/* in theme.css */
+.mod {
+    border-color: blue;
+}
+```
+
+[Scalable Modular Css Website](https://smacss.com/)
+
 ### Why Categorize?
 The idea here is to codify patterns, which can lead to resuable code. The SMCSS approach is fairly agnostic to any particular class naming convetion, however they do recommend that the different categorizies be condensed and used as prefixes for your styles. For example, one might use layout-row-2 or l-row-2 for a layout style. However, when it comes to modules and components it makese more sense to use the name of the component itself. 
 
@@ -84,9 +162,28 @@ Block Element Modifier or (BEM) is an approach to naming css classes in order to
 
 ### Pros
 * Easy naming system
+* More intuitive about the relationship between styling and the component
+* easy to write rules to evaluate
 
-## Cons
+### Cons
 * Modifiers can be confusing -- does it change state? Does it reflect a component attribute?
+* Block level element makes sense in traditional HTML DOM structure, but what about in react context with components? Or what about when the block level element changes.
+
+### Modifier Problem
+With BEM, it can be confusing to reason about which to use:
+```html
+<!-- standalone state hook -->
+<div class="c-card is-active">
+    […]
+</div>
+
+<!-- or BEM modifier -->
+<div class="c-card c-card--is-active">
+    […]
+</div>
+```
+In this case it almost seems better to use is-active class to address simple state change since this indicate DOM element change, not a component modifier.
+
 
 ## BEM naming enhancements aka BEMIT
 Hungarian Notation, you can use c-, for Components, o-, for Objects, u-, for Utilities, and is-/has- for States (there are plenty more detailed in the linked post).
@@ -110,8 +207,17 @@ Hungarian Notation, you can use c-, for Components, o-, for Objects, u-, for Uti
 ```
 
 ## Enduring CSS
-Takes a lot from BEM styling but uses the idea of a context space as a prefix. The context would look like `sw-Block___element`. So in Card.jsx in the referalls and authorizations app, say you have a link, then you'd represent it like this: `ra-Card__link`.
+Takes a lot from BEM styling but uses the idea of a context space as a prefix. However, the modifiers are removed and instead replaced with the idea of a variant. And instead of Block Element, we use instead Component_Node-variant. So the class would follow this convention `ns-Component_Node-variant`.
 
+* ns : The micro-namespace (always lower-case)
+* -Component: The Component name (always upper camel-case)
+* _Node: The child node of a component (always upper camel-case preceded by an underscore)
+* -variant: The optional variant of a node (always lower-case and preceded by a hyphen)
+
+ If you have a cardlist label node inside a card, you would look to the containing component (works nicely with react class syntax). So you might have `sw-Card_Label`.
+
+## What would a variant be?
+It is optinoal and only used when there are slight variations between two nodes. For example you might two labels but they differ in terms of background color and text color. You might do `sw-Card_Label-primary` and `sw-Card_Label-secondary.`
 
 **The ten commandments of Enduring CSS**
 1. Thou shalt have a single source of truth for all key selectors
@@ -124,6 +230,47 @@ Takes a lot from BEM styling but uses the idea of a context space as a prefix. T
 8. Thou shalt comment all magic numbers and browser hacks
 9. Thou shalt not inline images
 10. Thou shalt not write complicated CSS when simple CSS will work just as well
+
+## Global Styles?
+When the need arises, the author of Enduring CSS advocates us a globalCSS file.
+> In that folder would be any variables, mixins, global image assets, any font or iconfont
+files, a basic CSS reset file and any global CSS needed.
+
+### Pros
+* Reasoning about the Component architecture is more consistent with the actual js arhiecture
+* The use of micro-namespacing helps declutter competing component styling in the app
+* single class keeps specificty in check
+
+### Cons
+* like with BEM's modifiers, state changes don't fit easily into the concept of a variant
+* animations? what if you wanted to signal the transitional states of a component (fly-in onload)
+* It can be easy to overmodularize and make everything a component
+
+## Inline Styles you say?
+
+There's a general beef against using CSS. The main problems with CSS are that:
+* everything is basically global, they are matched against everything in the DOM. 
+* Optimization could be improved by keeping styling closer to the source. CSS can grow over time making your app much slower. And finally, if you're already in JS context, you can make styling more dynamic. Abstracting it out to a javascript module would be an alternative approach.
+
+## Styles.js
+Instead of a css file, you would use key-value pairs to maintain your code.
+
+### Pros
+* Closer to the DOM
+
+### Cons
+* more difficult to revise or modify a traditional site
+* coupling of how a site looks vs how it functions
+* javascript is not fast, css is faster. 
+
+
+### Summary of the above approaches
+
+* You can do a compositional level approach using classes "p(10px) m(10px)" like that advocated by Atomic Css.
+* You can use Single Class Rules, like BEM which enforces class pattern
+* There are BEM variants which try to keep styling close to the source
+* There are BEM variants one called Enduring CSS which uses sc-Component_Node-variant
+* There's a growing request to use inline styles
 
 ## Extra resources
 [Compare Selector Speed](https://benfrain.com/selector-test/)
