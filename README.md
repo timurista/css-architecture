@@ -270,7 +270,7 @@ Instead of a css file, you would use key-value pairs to maintain your code.
 * You can use Single Class Rules, like BEM which enforces class pattern
 * There are BEM variants which try to keep styling close to the source
 * There are BEM variants one called Enduring CSS which uses sc-Component_Node-variant
-* There's a growing request to use inline styles
+* You can organize your css into different folders which target different kinds of selectors SMACSS approach.
 
 ## Extra resources
 [Compare Selector Speed](https://benfrain.com/selector-test/)
